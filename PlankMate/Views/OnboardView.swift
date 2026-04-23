@@ -88,7 +88,7 @@ struct OnboardView: View {
                     setupCard(
                         icon: "iphone.landscape",
                         title: "Landscape Orientation",
-                        subtitle: "Place your phone horizontally for the best tracking."
+                        subtitle: "Place your phone horizontally for the best tracking. "
                     )
                     
                     setupCard(
