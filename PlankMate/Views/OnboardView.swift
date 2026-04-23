@@ -88,13 +88,13 @@ struct OnboardView: View {
                     setupCard(
                         icon: "iphone.landscape",
                         title: "Landscape Orientation",
-                        subtitle: "Place your phone horizontally (landscape) for the best tracking."
+                        subtitle: "Place your phone horizontally for the best tracking."
                     )
                     
                     setupCard(
                         icon: "shippingbox.fill",
                         title: "Stable Placement",
-                        subtitle: "Place it on the floor using a stand, a stack of books, or lean it against a wall."
+                        subtitle: "Place it on the floor using a stand or lean it against a wall."
                     )
                     
                     setupCard(
