@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var showGuide = false
+    @StateObject private var viewModel = ResultViewModel()
     
     var body: some View {
         ZStack {
@@ -34,20 +35,25 @@ struct HomeView: View {
                             .padding(.top, 10)
                         
                         HStack(spacing: 16) {
-                            StatCard(title: "Time", value: "0m", icon: "clock.fill")
-                            StatCard(title: "Streak", value: "0", icon: "flame.fill")
+                            // 2. Gunakan data dari ViewModel
+                            StatCard(title: "Time", value: viewModel.totalMinutes, icon: "clock.fill")
+                            StatCard(title: "Streak", value: viewModel.currentStreak, icon: "flame.fill")
                         }
                         .padding(.horizontal)
                     }
                     
-                    // 2. Practice Trend (Empty State)
+                    
+                    // 2. Practice Trend (Tampilan Dinamis)
                     VStack(alignment: .leading, spacing: 12) {
+                        // Jika ada data, kita bisa tampilkan grafik nanti,
+                        // sementara kita update teks empty state-nya
                         VStack(spacing: 12) {
                             Image(systemName: "chart.bar.fill")
                                 .font(.system(size: 40))
                                 .foregroundColor(Color("limeGreen").opacity(0.3))
                             
-                            Text("0 practices this week,\nyour practice trend will appear here.")
+                            // 3. Update teks berdasarkan jumlah sesi
+                            Text(viewModel.practiceCountText)
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -103,6 +109,9 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         .onAppear {
+            // 4. Refresh data setiap kali masuk ke Home
+            viewModel.calculateStats()
+            
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                 windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
             }
@@ -111,37 +120,36 @@ struct HomeView: View {
             OnboardView(hasSeenIntro: .constant(true), isGuideMode: true)
         }
     }
-}
-
-// Subviews for clean code
-struct StatCard: View {
-    var title: String
-    var value: String
-    var icon: String
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Image(systemName: icon)
-                .foregroundColor(Color("secondaryAccent"))
-                .font(.title3)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(value)
+    // Subviews for clean code
+    struct StatCard: View {
+        var title: String
+        var value: String
+        var icon: String
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                Image(systemName: icon)
+                    .foregroundColor(Color("secondaryAccent"))
                     .font(.title3)
-                    .fontWeight(.bold)
-                Text(title)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(value)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                    Text(title)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
-
-#Preview {
-    NavigationStack {
-        HomeView()
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        HomeView()
+//    }
+//}

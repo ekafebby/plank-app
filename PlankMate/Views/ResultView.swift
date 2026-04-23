@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct ResultView: View {
+    @StateObject private var viewModel = ResultViewModel()
+    
+    // Input dari Camera View
     var totalTime: TimeInterval
     var accuracy: Double
     
@@ -12,25 +15,16 @@ struct ResultView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 32) {
-                // Header
-                VStack(alignment: .center, spacing: 4) {
-                    Text("Result")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-//                    Text("Session Completed")
-//                        .font(.subheadline)
-//                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
+                Text("Result")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top, 20)
                 
-                // Total Time
+                // Total Time via ViewModel
                 VStack(spacing: 8) {
                     Text("Total Time")
                         .font(.title3)
-                    
-                    Text(timeString(time: totalTime))
+                    Text(viewModel.timeString(time: totalTime))
                         .font(.system(size: 48, weight: .bold))
                 }
                 
@@ -46,18 +40,11 @@ struct ResultView: View {
                         
                         Circle()
                             .trim(from: 0.0, to: CGFloat(min(accuracy / 100, 1.0)))
-                            .stroke(Color("limeGreen", bundle: nil), style: StrokeStyle(lineWidth: 15, lineCap: .round))
+                            .stroke(Color("limeGreen"), style: StrokeStyle(lineWidth: 15, lineCap: .round))
                             .rotationEffect(Angle(degrees: -90))
                         
-                        VStack {
-                            Text("\(Int(accuracy))%")
-                                .font(.system(size: 48, weight: .bold))
-//                            Text("ACCURACY")
-//                                .font(.caption)
-//                                .fontWeight(.bold)
-//                                .foregroundColor(.gray)
-//                                .tracking(2)
-                        }
+                        Text("\(Int(accuracy))%")
+                            .font(.system(size: 48, weight: .bold))
                     }
                     .frame(width: 180, height: 180)
                 }
@@ -69,19 +56,17 @@ struct ResultView: View {
                 
                 Spacer()
                 
-                // Buttons
-                VStack(spacing: 16) {
-                    Button(action: {
-                        backToHome = true
-                    }) {
-                        Text("Back to Home")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, minHeight: 60)
-                            .background(Color("limeGreen", bundle: nil))
-                            .clipShape(RoundedRectangle(cornerRadius: 30))
-                    }
+                Button(action: {
+                    viewModel.saveSession(duration: totalTime, accuracy: accuracy)
+                    backToHome = true
+                }) {
+                    Text("Back to Home")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, minHeight: 60)
+                        .background(Color("limeGreen"))
+                        .clipShape(RoundedRectangle(cornerRadius: 30))
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 20)
@@ -91,17 +76,5 @@ struct ResultView: View {
         .navigationDestination(isPresented: $backToHome) {
             HomeView()
         }
-    }
-    
-    func timeString(time: TimeInterval) -> String {
-        let minutes = Int(time) / 60
-        let seconds = Int(time) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ResultView(totalTime: 42, accuracy: 76)
     }
 }
