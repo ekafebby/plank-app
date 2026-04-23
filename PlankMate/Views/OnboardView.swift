@@ -118,6 +118,10 @@ struct OnboardView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Automatic Tracking")
                         .font(.title.bold())
+                    
+                    Text("Help you to monitor and improve your form.")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
                 }
                 .padding(.horizontal)
                 

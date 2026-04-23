@@ -5,9 +5,13 @@ class ResultViewModel: ObservableObject {
     @Published var currentSession: PlankSession?
     
     // Properti untuk HomeView
-    @Published var totalMinutes: String = "0m"
+    @Published var totalMinutes: String = "0"
     @Published var currentStreak: String = "0"
     @Published var practiceCountText: String = ""
+    
+    @Published var bestRecord: String = "00:00"
+    @Published var bestAccuracy: String = "0%"
+    @Published var sessionsThisWeekCount: String = "0"
     
     @AppStorage("plank_history") private var historyData: Data = Data()
     
@@ -48,6 +52,21 @@ class ResultViewModel: ObservableObject {
         } else {
             self.practiceCountText = "\(history.count) practices this week,\nkeep up the good work!"
         }
+        
+        // 4. Hitung Personal Best & Weekly Stats
+        let calendar = Calendar.current
+        let now = Date()
+        let startOfWeek = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now))!
+        
+        let weeklySessions = history.filter { $0.date >= startOfWeek }
+        self.sessionsThisWeekCount = "\(weeklySessions.count)"
+        
+        let maxAccuracy = history.map { $0.accuracy }.max() ?? 0
+        self.bestAccuracy = String(format: "%.0f%%", maxAccuracy * 100)
+        
+        let sessionsWithBestForm = history.filter { $0.accuracy == maxAccuracy }
+        let allTimeBestLongestWithBestForm = sessionsWithBestForm.map { $0.duration }.max() ?? 0
+        self.bestRecord = timeString(time: allTimeBestLongestWithBestForm)
     }
     
     private func calculateSimpleStreak(from history: [PlankSession]) -> Int {

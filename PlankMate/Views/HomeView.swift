@@ -35,8 +35,7 @@ struct HomeView: View {
                             .padding(.top, 10)
                         
                         HStack(spacing: 16) {
-                            // 2. Gunakan data dari ViewModel
-                            StatCard(title: "Time", value: viewModel.totalMinutes, icon: "clock.fill")
+                            StatCard(title: "Sessions This Week", value: viewModel.sessionsThisWeekCount, icon: "star.circle.fill")
                             StatCard(title: "Streak", value: viewModel.currentStreak, icon: "flame.fill")
                         }
                         .padding(.horizontal)
@@ -65,26 +64,41 @@ struct HomeView: View {
                         .padding(.horizontal)
                     }
                     
-                    // 3. Daily Insight (Single Box)
+                    // 3. Personal Best Section
                     VStack(alignment: .leading, spacing: 12) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Build Your Core Strength")
-                                    .font(.headline)
-                                Spacer()
-                                Image(systemName: "lightbulb.fill")
-                                    .foregroundColor(Color("secondaryAccent"))
+                        Text("Personal Best")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .padding(.horizontal)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                BestCard(
+                                    title: "Highest Accuracy",
+                                    value: viewModel.bestAccuracy,
+                                    icon: "target",
+                                    color: .orange
+                                )
+                                
+                                BestCard(
+                                    title: "Longest Plank",
+                                    value: viewModel.bestRecord,
+                                    icon: "trophy.fill",
+                                    color: .blue
+                                )
+                                
+                                BestCard(
+                                    title: "Sesi Minggu Ini",
+                                    value: viewModel.sessionsThisWeekCount,
+                                    icon: "calendar",
+                                    color: .purple
+                                )
                             }
-                            
-                            Text("Start your session now!")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                            .padding(.bottom, 8)
                         }
-                        .padding(40)
-                        .background(Color("limeGreen").opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                        .padding(.horizontal)
                     }
+                    
                     
                     VStack(spacing:0) {
                         NavigationLink(destination: CameraTrackingView()) {
@@ -145,6 +159,37 @@ struct HomeView: View {
             .padding()
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 20))
+        }
+    }
+    
+    struct BestCard: View {
+        var title: String
+        var value: String
+        var icon: String
+        var color: Color
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: icon)
+                        .foregroundColor(color)
+                        .font(.headline)
+                    Spacer()
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(value)
+                        .font(.title2.bold())
+                    Text(title)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(width: 140)
+            .padding(16)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .shadow(color: Color.black.opacity(0.03), radius: 5, x: 0, y: 2)
         }
     }
 }
